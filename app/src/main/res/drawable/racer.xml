@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="#FF0000"/>
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="oval"  android:useLevel="false">
+                    <solid android:color="#FFF200"/>
+                </shape>
+            </item>
+            <item android:drawable="@drawable/baseline_tire_repair_24"/>
+        </layer-list>
+    </item>
+    <item>
+        <layer-list>
+            <item>
+                <shape android:shape="oval" android:useLevel="false">
+                    <solid android:color="@color/black" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/baseline_directions_car_24"/>
+        </layer-list>
+    </item>
+</selector>
