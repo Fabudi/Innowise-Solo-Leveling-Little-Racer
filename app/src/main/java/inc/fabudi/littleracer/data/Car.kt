@@ -6,9 +6,11 @@ import kotlinx.coroutines.delay
 import java.util.Random
 
 open class Car(
-    private val speed: Int, private val punctureProbability: Float, var distanceToRide: Int
+    val speed: Int,
+    val punctureProbability: Float
 ) {
-
+    private var distanceToRide: Int = 0
+    var distanceTraveled: Int = 0
     private fun punctureWheel() = Random().nextFloat() <= punctureProbability
 
     fun runAsync() = GlobalScope.async {
@@ -16,6 +18,7 @@ open class Car(
             if (punctureWheel()) delay(5000)
             else {
                 distanceToRide -= speed
+                distanceTraveled += speed
                 delay(1000)
             }
         }
