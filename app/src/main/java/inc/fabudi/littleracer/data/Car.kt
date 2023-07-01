@@ -6,8 +6,7 @@ import kotlinx.coroutines.delay
 import java.util.Random
 
 open class Car(
-    val speed: Int,
-    val punctureProbability: Float
+    val speed: Int, val punctureProbability: Float, val color: Int
 ) {
     private var distanceToRide: Int = 0
     var distanceTraveled: Int = 0
