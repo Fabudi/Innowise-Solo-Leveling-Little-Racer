@@ -3,16 +3,19 @@ package inc.fabudi.littleracer.ui
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PathMeasure
 import android.graphics.PointF
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
 import android.view.View
+import inc.fabudi.littleracer.PathParser
 import inc.fabudi.littleracer.R
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
+import java.lang.Float.min
 
 
 class RaceRing @JvmOverloads constructor(
@@ -29,6 +32,7 @@ class RaceRing @JvmOverloads constructor(
     private var radius = halfHeight / 2
     private var progressRadius = 10f
     private var progressDrawables = HashMap<String, Drawable>()
+    private var path = Path()
 
     init {
         backgroundPaint.style = Paint.Style.STROKE
@@ -53,8 +57,13 @@ class RaceRing @JvmOverloads constructor(
         } finally {
             typedArray.recycle()
         }
+        path = PathParser.parseStringIntoPathObject(
+            "M 152.92 130.702 C 421.89 19.124 492.514 550.325 722.623 557.516 C 1029.614 552.538 1082.324 118.628 1305.317 125.135 C 1411.815 130.305 1463.761 644.255 1305.317 648.445 L 147.353 641.023 C -11.753 638.94 71.901 166.634 152.92 130.702 Z"
+        )
+
         whitePaint.color = Color.WHITE
     }
+
 
     private fun setProgressFilled(filled: Boolean) {
         progressPaint.style = if (filled) Paint.Style.FILL else Paint.Style.STROKE
@@ -88,37 +97,12 @@ class RaceRing @JvmOverloads constructor(
     }
 
     private fun calculateProgressPoint(progress: Float): PointF {
-        val totalLength = 2 * PI * radius + 2 * (width - 2 * radius)
-        val progressLength = totalLength * (progress % progressMax) / progressMax
-        val upperLine = width - 2 * radius
-        val rightCircle = upperLine + PI * radius
-        val lowerLine = rightCircle + width - 2 * radius
-        val leftCircle = lowerLine + PI * radius
-        val offset = 2f * strokeWidth
-        return when (progressLength) {
-            in lowerLine..leftCircle -> {
-                val angle = (progressLength - lowerLine) / radius
-                PointF(
-                    (radius + ((radius - offset) * cos(angle + PI / 2)).toFloat()),
-                    radius + (((radius - offset) * sin(angle + PI / 2)).toFloat())
-                )
-            }
-
-            in rightCircle..lowerLine -> PointF(
-                (width - radius - (progressLength - rightCircle)).toFloat(), 2 * radius - offset
-            )
-
-            in upperLine..rightCircle.toFloat() -> {
-                val angle = (progressLength - upperLine) / radius
-                PointF(
-                    (width.toFloat() - radius + ((radius - offset) * cos(angle - PI / 2)).toFloat()),
-                    radius + (((radius - offset) * sin(angle - PI / 2)).toFloat())
-                )
-            }
-
-            in 0f..upperLine -> PointF((radius + progressLength).toFloat(), offset)
-            else -> PointF(0f, 0f)
-        }
+        val pathMeasure = PathMeasure(path, false)
+        val cords = floatArrayOf(0f, 0f)
+        pathMeasure.getPosTan(
+            pathMeasure.length * (progress % progressMax) / progressMax, cords, null
+        )
+        return PointF(cords[0], cords[1])
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -126,42 +110,19 @@ class RaceRing @JvmOverloads constructor(
         halfWidth = width / 2.0f
         halfHeight = height / 2.0f
         radius = height / 2.0f
-        drawPath(canvas, backgroundPaint)
+        val scaleMatrix = Matrix()
+        val rect = RectF()
+        path.computeBounds(rect, true)
+        val ratioY = height / rect.height()
+        val ratioX = width / rect.width()
+        val maxRatio = min(min(ratioX, ratioY), 1.0f)
+        scaleMatrix.postScale(maxRatio, maxRatio)
+        path.transform(scaleMatrix)
+        path.computeBounds(rect, true)
+        canvas.translate((width-rect.width())/2, -((height - rect.height()) / 2 + strokeWidth))
+        canvas.drawPath(path, backgroundPaint)
         for (progress in progresses) drawPoint(
             canvas, calculateProgressPoint(progress.value), progressDrawables[progress.key]
-        )
-    }
-
-    private fun drawPath(canvas: Canvas, paint: Paint) {
-        canvas.drawArc(
-            2 * strokeWidth,
-            2 * strokeWidth,
-            2 * radius - 2 * strokeWidth,
-            height - 2 * strokeWidth,
-            270f,
-            -180f,
-            false,
-            paint
-        )
-        canvas.drawLine(
-            radius, 2 * strokeWidth, width - radius, 2 * strokeWidth, paint
-        )
-        canvas.drawArc(
-            width - 2 * radius + 2 * strokeWidth,
-            2 * strokeWidth,
-            width.toFloat() - 2 * strokeWidth,
-            2 * radius - 2 * strokeWidth,
-            90f,
-            -180f,
-            false,
-            paint
-        )
-        canvas.drawLine(
-            width - radius,
-            2 * radius - 2 * strokeWidth,
-            radius,
-            2 * radius - 2 * strokeWidth,
-            paint
         )
     }
 
@@ -198,6 +159,11 @@ class RaceRing @JvmOverloads constructor(
         val drawable = progressDrawables[key] ?: return
         drawable.state = state
         progressDrawables.replace(key, drawable)
+    }
+
+    fun removeAll() {
+        progresses = HashMap()
+        progressDrawables = HashMap()
     }
 
     companion object {
