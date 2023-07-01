@@ -8,37 +8,57 @@
 
     <LinearLayout
         android:id="@+id/linearLayout"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView2"
+        <inc.fabudi.littleracer.ui.RaceRing
+            android:id="@+id/raceRing2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Track config"
-            android:textColor="#000000"
-            android:textSize="20sp" />
+            android:layout_height="150dp"
+            android:visibility="gone"
+            app:RR_progress_background_color="#4DD0E1"
+            app:RR_progress_color="#BA68C8"
+            app:RR_progress_filled="false"
+            app:RR_progress_radius="10dp"
+            app:RR_progress_stroke_width="5dp"
+            app:RR_racer_drawable="@drawable/racer"
+            app:RR_stroke_width="15dp" />
 
-        <EditText
-            android:id="@+id/length_edittext"
+        <LinearLayout
+            android:id="@+id/track_config_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="Track length, km"
-            android:inputType="number"
-            android:textColor="#000000" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/start_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:backgroundTint="#000000"
-            android:text="Start"
-            android:textColor="#FFFFFF" />
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Track config"
+                android:textColor="#000000"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/length_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="Track length, km"
+                android:inputType="number"
+                android:textColor="#000000" />
+
+            <Button
+                android:id="@+id/start_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="#000000"
+                android:text="Start"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -46,7 +66,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layoutManager="LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/repeat_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
@@ -64,6 +84,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/baseline_add_24"
         app:tint="#FFFFFF" />
+
+    <LinearLayout
+        android:id="@+id/repeat_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
+            android:id="@+id/menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#000000"
+            android:text="Menu"
+            android:textColor="#FFFFFF" />
+
+        <Button
+            android:id="@+id/restart_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:layout_weight="1"
+            android:backgroundTint="#000000"
+            android:text="One more"
+            android:textColor="#FFFFFF" />
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/truck_fab"
