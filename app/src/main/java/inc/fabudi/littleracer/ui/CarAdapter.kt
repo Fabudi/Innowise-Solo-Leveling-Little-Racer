@@ -33,4 +33,9 @@ class CarAdapter(private val cars: ArrayList<Car>) : RecyclerView.Adapter<CarVie
         cars.removeAt(position)
         notifyItemRemoved(position)
     }
+
+    fun move() {
+        cars.sortByDescending { it.distanceTraveled }
+        notifyDataSetChanged()
+    }
 }
