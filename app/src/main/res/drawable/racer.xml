@@ -17,12 +17,12 @@
     </item>
     <item>
         <layer-list>
-            <item>
+            <item android:id="@+id/racer_background">
                 <shape android:shape="oval" android:useLevel="false">
                     <solid android:color="@color/black" />
                 </shape>
             </item>
-            <item android:drawable="@drawable/baseline_directions_car_24"/>
+            <item android:id="@+id/racer_icon" android:drawable="@drawable/baseline_directions_car_24"/>
         </layer-list>
     </item>
 </selector>
