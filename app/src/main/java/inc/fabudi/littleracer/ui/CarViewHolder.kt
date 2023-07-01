@@ -15,7 +15,6 @@ import inc.fabudi.littleracer.data.Car
 import inc.fabudi.littleracer.data.Motorbike
 import inc.fabudi.littleracer.data.PassengerCar
 import inc.fabudi.littleracer.data.Truck
-import kotlin.random.Random
 
 class CarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -33,29 +32,31 @@ class CarViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val removeButton = itemView.findViewById<AppCompatImageButton>(R.id.remove_button)
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun bind(car: Car, position: Int, listener: OnClickListener){
+    fun bind(car: Car, position: Int, listener: OnClickListener) {
         name.text = car::class.simpleName
-        val color = Color.rgb(Random.nextFloat(), Random.nextFloat(), Random.nextFloat())
-        if (Color.luminance(color) < 0.5) number.setTextColor(Color.WHITE)
-        avatar.backgroundTintList = ColorStateList.valueOf(color)
-        number.text = position.toString()
+        if (Color.luminance(car.color) < 0.5) number.setTextColor(Color.WHITE)
+        avatar.backgroundTintList = ColorStateList.valueOf(car.color)
+        number.text = (position + 1).toString()
         distanceLabel.text = "${car.distanceTraveled}km"
         speedLabel.text = "${car.speed}km/h"
         tiresLabel.text = "${(car.punctureProbability)}%"
-        when(car){
-            is PassengerCar ->{
+        when (car) {
+            is PassengerCar -> {
                 additionalIcon.setBackgroundResource(R.drawable.baseline_people_24)
                 additionalLabel.text = car.numberOfPassengers.toString()
             }
+
             is Motorbike -> {
                 additionalIcon.setBackgroundResource(R.drawable.baseline_shopping_cart_24)
                 additionalLabel.text = car.sideCar.toString()
             }
+
             is Truck -> {
                 additionalIcon.setBackgroundResource(R.drawable.baseline_scale_24)
                 additionalLabel.text = "${car.cargoWeight}kg"
             }
         }
+        removeButton.visibility = if (car.isEditable) View.VISIBLE else View.INVISIBLE
         removeButton.setOnClickListener(listener)
     }
 }
